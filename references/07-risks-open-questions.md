@@ -4,7 +4,7 @@
 
 把所有"已识别但仍存在残余概率"的风险**显式登记**到最终方案，作为项目交付后回顾的事实库。
 
-> **重要变更**：待确认事项（TBD-）与待补全事项（TODO-）**不再放进最终技术方案文档**，统一登记在工作目录 `.tech-design/open-questions.md`，并在方案元信息头给出"N 条 TBD / M 条 TODO（详见 .tech-design/open-questions.md）"摘要行。
+> **重要变更**：待确认事项（TBD-）与待补全事项（TODO-）**不再放进最终技术方案文档**，统一登记在工作目录 `.qiqskills/backend-tech/open-questions.md`，并在方案元信息头给出"N 条 TBD / M 条 TODO（详见 .qiqskills/backend-tech/open-questions.md）"摘要行。
 
 ## 最终方案中保留的内容
 
@@ -62,7 +62,7 @@
 
 ## 工作目录中维护的内容
 
-### `.tech-design/open-questions.md` 模板
+### `.qiqskills/backend-tech/open-questions.md` 模板
 
 ```markdown
 # 待确认事项与待补全事项跟踪
@@ -88,14 +88,14 @@
 
 1. **风险不许写"已规避"**：所有风险都有残余概率，必须给出缓解措施 + 残余风险描述。
 2. **不许把高风险藏成中风险**：等级判定需基于具体数字（如金额 / 影响用户数）而非主观意愿。
-3. **TBD / TODO 不进交付文档**：所有 TBD / TODO 一律落 `.tech-design/open-questions.md`，技术方案只在元信息头给条数摘要。
+3. **TBD / TODO 不进交付文档**：所有 TBD / TODO 一律落 `.qiqskills/backend-tech/open-questions.md`，技术方案只在元信息头给条数摘要。
 4. **TBD 必须有期望时间**：没有 deadline 的待确认事项 = 永远不会确认。
 5. **责任人必须实名**：不能写"团队 / 项目组" — 没人负责 = 不会跟进。
 6. **风险类别要平衡**：仅识别技术风险通常意味着没识全；业务 / 合规 / 团队 / **安全（越权 + 漏洞）** 风险必须独立审视。
 
 ## 风险识别参考清单（用于自检是否有遗漏）
 
-逐条对照，命中的必须登记到最终方案 7.1（涉及未确认者同时登记到 `.tech-design/open-questions.md` 的 TBD）：
+逐条对照，命中的必须登记到最终方案 7.1（涉及未确认者同时登记到 `.qiqskills/backend-tech/open-questions.md` 的 TBD）：
 
 - [ ] **业务风险**：需求变更概率？是否有竞品上线压力？
 - [ ] **数据风险**：是否涉及敏感数据？数据迁移是否有丢失风险？
@@ -118,11 +118,11 @@
 - [ ] 已对照"风险识别参考清单"逐条自检。
 - [ ] 至少 1 条"安全 - 越权"或"安全 - 漏洞"类风险（除非显式声明本场景不涉及外部输入与鉴权）。
 - [ ] 缓解措施的引用编号（FT- / D- / FR- / NFR-）在前文有定义。
-- [ ] **未**在本章出现 TBD- / TODO-（已挪到 `.tech-design/open-questions.md`）。
+- [ ] **未**在本章出现 TBD- / TODO-（已挪到 `.qiqskills/backend-tech/open-questions.md`）。
 
 工作目录：
 
-- [ ] `.tech-design/open-questions.md` 已包含 TBD / TODO 表，每条字段齐全。
+- [ ] `.qiqskills/backend-tech/open-questions.md` 已包含 TBD / TODO 表，每条字段齐全。
 - [ ] 方案元信息头已给出"N 条 TBD / M 条 TODO"摘要行 + 链接。
 
 ## 反模式
