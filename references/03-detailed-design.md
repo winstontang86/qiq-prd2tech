@@ -195,7 +195,7 @@ Step 5 — 异常补偿（独立常驻任务）
 
 ### 3.4 状态机设计
 
-**涉及状态流转的实体**必须给出状态图（Mermaid `stateDiagram-v2`）+ 流转表。
+**涉及状态流转的实体**必须给出状态图（Mermaid `stateDiagram-v2`）+ 流转表。状态 ID 使用英文大写或下划线；事件文本保持短句；复杂条件放到流转表，避免在图中写长文本、HTML 标签或 emoji。
 
 ```mermaid
 stateDiagram-v2

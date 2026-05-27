@@ -1,34 +1,14 @@
 # 技术方案 — {方案名称}
 
-> 版本：v1.0
-> 作者：{姓名}
-> 日期：YYYY-MM-DD
-> 执行模式：{完整产出 / 草案}
-> 文档置信度：{高 / 中 / 低}
-> 评审状态：{草稿 / 待评审 / 已评审 / 已上线}
-> 质量门禁：{✅ 通过 / ⚠️ 有条件通过 / ❌ 不通过 / 📝 草案模式不出门禁}（详见 `.tech-design/quality-check.md`）
-> 待确认事项：{N 条 TBD / M 条 TODO}（详见 `.tech-design/open-questions.md`）
-
-> **过程性产物**（需求采集明细、质量自检、TBD、TODO、临时假设变更）统一存放在工作目录 `.tech-design/`，**不在本文档展开**。本文档仅为最终交付内容。
->
-> **不生成章节目录（TOC）**：靠标题层级定位即可，避免徒增篇幅。
->
-> **篇幅控制**：本文档总行数尽量 ≤ 1000 行。
-
-## 变更摘要
-
-> **仅保留最近两次**变更记录。更早的历史归档到 `.tech-design/notes.md` 的「历史变更归档」小节，本表不展开。
-
-| 版本 | 日期 | 作者 | 变更内容 |
-|---|---|---|---|
-| v{N}   | YYYY-MM-DD | | 本次变更摘要 |
-| v{N-1} | YYYY-MM-DD | | 上一次变更摘要 |
+> 元信息：v1.0｜YYYY-MM-DD｜{作者}｜{完整产出 / 草案}
+> 状态：置信度 {高 / 中 / 低}｜门禁 {✅ 通过 / ⚠️ 有条件通过 / ❌ 不通过 / 📝 草案}｜待确认 {N 条 TBD / M 条 TODO}
+> 过程产物：`.qiqskills/backend-tech/`（需求、门禁、待确认、历史变更）
 
 ---
 
 ## 第 1 章 需求分析（精简）
 
-> 本章为摘要形态。FR / NFR / 约束 / 假设的完整字段（描述、验收标准、来源等）保存在 `.tech-design/requirements.md`，本章仅列摘要 + 关键数字。
+> 本章为摘要形态。FR / NFR / 约束 / 假设的完整字段（描述、验收标准、来源等）保存在 `.qiqskills/backend-tech/requirements.md`，本章仅列摘要 + 关键数字。
 
 ### 1.1 业务背景与目标
 
@@ -40,7 +20,7 @@
 |---|---|---|---|
 | FR-001 | | P0 | |
 
-> 完整字段（描述、输入输出、来源等）见 `.tech-design/requirements.md`。
+> 完整字段（描述、输入输出、来源等）见 `.qiqskills/backend-tech/requirements.md`。
 
 ### 1.3 非功能性需求摘要（NFR）
 
@@ -59,7 +39,7 @@
 ### 1.4 约束与假设要点
 
 - **关键约束**（要点列出）：技术栈 / 团队 / 时间窗 / 预算 / 组织依赖。
-- **关键假设摘要**：共 N 条 ASMP，影响最大的 ≤ 3 条要点列出；完整列表见 `.tech-design/requirements.md`。
+- **关键假设摘要**：共 N 条 ASMP，影响最大的 ≤ 3 条要点列出；完整列表见 `.qiqskills/backend-tech/requirements.md`。
 
 ### 1.5 边界声明
 
@@ -75,7 +55,8 @@
 
 ```mermaid
 flowchart LR
-    %% 在此放架构拓扑图
+    %% Mermaid 兼容规则：节点ID使用英文/数字/下划线；标签避免 emoji、HTML 标签和复杂样式
+    Client[客户端] --> Gateway[API网关]
 ```
 
 > 拓扑说明（3–5 段）：
@@ -109,7 +90,10 @@ sequenceDiagram
 
 ```mermaid
 flowchart LR
-    %% 在图中用🆕新增 / ✏️修改 / ⬜复用 显式标记
+    %% 使用文本标记 [新增] / [修改] / [复用]，避免 emoji、HTML 标签和自定义样式
+    Client[客户端] --> Gateway[API网关]
+    Gateway --> OrderSvc[订单服务 [修改]]
+    Gateway --> PromoSvc[营销服务 [新增]]
 ```
 
 > 合入视图说明（2–3 段）：与变更前的差异、跨边界的新链路、对既有调用的兼容性。
@@ -118,7 +102,7 @@ flowchart LR
 
 | 类别 | 名称 | 变更动作 | 变更摘要 | 影响接口 / 字段 / 兼容性 | 对应需求 |
 |---|---|---|---|---|---|
-| 服务 / 模块 / 存储 / MQ / 缓存命名空间 | | 🆕 新增 / ✏️ 修改 / ⬜ 复用 | | | |
+| 服务 / 模块 / 存储 / MQ / 缓存命名空间 | | [新增] / [修改] / [复用] | | | |
 
 ### 2.6 工程一致性原则（已有工程必填；新建工程显式声明并可省略表格）
 
@@ -356,7 +340,7 @@ stateDiagram-v2
 
 ## 第 6 章 部署与运维（简要提及）
 
-> 本章为**要点级**描述，不展开为操作手册。详细发布 SOP、扩缩容预案、配置项明细、上线 Checklist 不在本章呈现，按需放入独立 SOP 文档或 `.tech-design/notes.md`。
+> 本章为**要点级**描述，不展开为操作手册。详细发布 SOP、扩缩容预案、配置项明细、上线 Checklist 不在本章呈现，按需放入独立 SOP 文档或 `.qiqskills/backend-tech/notes.md`。
 
 ### 6.1 部署形态要点
 
@@ -391,7 +375,7 @@ stateDiagram-v2
 
 ## 第 7 章 风险登记
 
-> 本章只列**已识别风险（RISK-）**。**待确认事项（TBD）与待补全事项（TODO）不在本章**，统一登记在 `.tech-design/open-questions.md`，并在元信息头给出条数摘要。
+> 本章只列**已识别风险（RISK-）**。**待确认事项（TBD）与待补全事项（TODO）不在本章**，统一登记在 `.qiqskills/backend-tech/open-questions.md`，并在元信息头给出条数摘要。
 
 ### 7.1 已识别风险（RISK）
 
@@ -405,7 +389,7 @@ stateDiagram-v2
 
 ## 附录（保持精简）
 
-> 附录是**索引**而非内容仓库。每个附录小节正文 ≤ 10 行；历史信息只保留最近两次评审产生的条目，超出部分归档到 `.tech-design/notes.md`，附录中以一行链接引用。
+> 附录是**索引**而非内容仓库。每个附录小节正文 ≤ 10 行；历史变更、评审纪要全集等长尾信息归档到 `.qiqskills/backend-tech/notes.md`，附录中只保留一行链接引用。
 
 ### 附录 A：演进方向（Optional）
 
@@ -418,6 +402,6 @@ stateDiagram-v2
 - PRD：
 - 业务方会议纪要（最近一次）：
 - 历史监控大盘：
-- 工作目录：`.tech-design/`（含 `requirements.md` / `quality-check.md` / `open-questions.md` / `notes.md`）
+- 工作目录：`.qiqskills/backend-tech/`（含 `requirements.md` / `quality-check.md` / `open-questions.md` / `notes.md`）
 
-> 更早的历史资料、被取代的旧设计文档、历次评审纪要全集见 `.tech-design/notes.md` 的「历史归档」小节。
+> 更早的历史资料、被取代的旧设计文档、历次评审纪要全集见 `.qiqskills/backend-tech/notes.md` 的「历史归档」小节。

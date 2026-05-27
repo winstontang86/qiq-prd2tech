@@ -2,19 +2,19 @@
 
 > 本文用于 Step 5 机械执行：把"方案是否达标"由主观判断转为字段化判定。
 >
-> **重要变更**：本步骤的所有产出（自检结果、门禁判定、不满足项清单、反模式自检结果）一律写入 **`.tech-design/quality-check.md`**，**不写进最终技术方案文档**。最终方案仅在元信息头给出一行门禁结论摘要 + 指向 `.tech-design/quality-check.md` 的链接。
+> **重要变更**：本步骤的所有产出（自检结果、门禁判定、不满足项清单、反模式自检结果）一律写入 **`.qiqskills/backend-tech/quality-check.md`**，**不写进最终技术方案文档**。最终方案仅在元信息 `状态` 行保留门禁结论，`过程产物` 行统一指向 `.qiqskills/backend-tech/`。
 
 ## 一、必填字段总检查表
 
 | # | 项目 | 必填要求 | 失败处理 |
 |---|---|---|---|
-| Q-1 | 文档元信息 | 版本号、作者、日期、执行模式、置信度、变更摘要（**仅最近两次**）、门禁结论摘要、TBD/TODO 摘要 8 项齐全 | Blocker |
+| Q-1 | 文档元信息 | 标题 + 3 行以内摘要齐全：`元信息`（版本 / 日期 / 作者 / 执行模式）、`状态`（置信度 / 门禁 / TBD-TODO 数量）、`过程产物`（`.qiqskills/backend-tech/`） | Blocker |
 | Q-2 | 业务目标 | 一句话量化目标（含数字） | Blocker |
-| Q-3 | FR 摘要表 | 最终方案中以摘要表形式呈现，编号 / 标题 / 优先级 / 验收关键指标完整；详细字段在 `.tech-design/requirements.md` 中按 7 字段填齐 | Blocker |
+| Q-3 | FR 摘要表 | 最终方案中以摘要表形式呈现，编号 / 标题 / 优先级 / 验收关键指标完整；详细字段在 `.qiqskills/backend-tech/requirements.md` 中按 7 字段填齐 | Blocker |
 | Q-4 | NFR 摘要表 | **必填 4 项**（可用性 / 性能（QPS+延迟）/ 安全（含越权 + 漏洞）/ 可观测性）齐全且每条含具体数字；按场景适当覆盖一致性 / 容量 / 可维护性 / 可扩展性 / 成本 | Blocker |
-| Q-5 | ASMP 登记 | 所有未确认事项已编号，含影响与验证方式（在 `.tech-design/requirements.md`） | High（草案模式 Blocker） |
+| Q-5 | ASMP 登记 | 所有未确认事项已编号，含影响与验证方式（在 `.qiqskills/backend-tech/requirements.md`） | High（草案模式 Blocker） |
 | Q-6 | 架构图 | 至少一张可读拓扑图（≤ 15 节点） | Blocker |
-| Q-7 | 组件清单 | 字段化表覆盖图中所有组件，含职责 / SLA / 上下游 / 部署形态；并给出**合入后整体架构图**（标记🆕新增 / ✏️修改 / ⬜复用）+ **新增 / 修改 / 复用清单** | Blocker |
+| Q-7 | 组件清单 | 字段化表覆盖图中所有组件，含职责 / SLA / 上下游 / 部署形态；并给出**合入后整体架构图**（使用 `[新增]` / `[修改]` / `[复用]` 文本标记）+ **新增 / 修改 / 复用清单** | Blocker |
 | Q-8 | 关键交互 | 协议 / 超时 / 重试 / 限流 / 熔断 / 鉴权 7 项齐全 | High |
 | Q-9 | P0 数据流图 | 每个 P0 FR 对应一张时序图，含异常分支 | High |
 | Q-10 | 关键存储与关键数据结构 | 每张关键表含 DDL + 索引 + 容量估算 + 分片策略；缓存 / NoSQL / MQ schema 给出字段表；跨模块 DTO / 事件体 / 状态对象的字段、序列化、兼容性策略明确 | Blocker（涉及存储 / 跨模块结构时） |
@@ -30,13 +30,13 @@
 | Q-20 | 发布与回滚 | 灰度阶梯 / 自动回滚阈值 / 回滚时长 / 兼容期 4 项要点齐全 | High |
 | Q-21 | 配置原则 | 高危配置审核流程 + 加密 + 兜底默认值 3 点要点齐全 | Medium |
 | Q-22 | 风险登记 | 每条 9 字段；至少识别 5 类风险（业务/技术/数据/**安全(越权或漏洞)**/团队） | High |
-| Q-23 | TBD / TODO 归位 | 已落 `.tech-design/open-questions.md`；最终方案中**未**出现 TBD / TODO 表；元信息头有摘要行 | High |
-| Q-24 | 附录与历史信息精简 | 最终方案**不含章节目录（TOC）**与术语表；每个附录小节 ≤ 10 行；变更摘要表**仅展示最近两次**版本；演进方向 / 参考资料 / 更早版本变更记录等历史条目超过最近两次的部分已归档到 `.tech-design/notes.md` | Medium |
+| Q-23 | TBD / TODO 归位 | 已落 `.qiqskills/backend-tech/open-questions.md`；最终方案中**未**出现 TBD / TODO 表；元信息头有摘要行 | High |
+| Q-24 | 附录与历史信息精简 | 最终方案**不含章节目录（TOC）**、术语表和历史变更表；每个附录小节 ≤ 10 行；演进方向 / 参考资料 / 历史变更等长尾信息已归档到 `.qiqskills/backend-tech/notes.md` | Medium |
 | Q-25 | 反模式自检 | 08-anti-patterns 的反模式（A–P）已逐条回答 | High |
 | Q-26 | 需求-设计追溯 | 全文设计点都能引用 FR/NFR/ASMP 编号 | High |
 | Q-27 | 篇幅与体量 | 第 1 章 ≤ 整篇 15%；第 6 章为要点级（≤ 1.5 页），未展开为操作手册 | High |
 | Q-28 | 一致性微调 | 已执行 Step 7 整体性 review，术语 / 组件名 / 编号双向引用一致 | High |
-| Q-29 | 工作目录完整 | `.tech-design/` 下 `requirements.md` / `quality-check.md` / `open-questions.md` 至少齐全；若本次为从零启动，上一轮临时文件已归档到 `.tech-design/archive/<时间戳>/` | Blocker |
+| Q-29 | 工作目录完整 | `.qiqskills/backend-tech/` 下 `requirements.md` / `quality-check.md` / `open-questions.md` 至少齐全；若本次为从零启动，上一轮临时文件已归档到 `.qiqskills/backend-tech/archive/<时间戳>/` | Blocker |
 | Q-30 | 安全聚焦 | 越权（水平 / 垂直 / 功能）与漏洞（注入 / 反序列化 / SSRF / XSS / CSRF / 敏感信息泄露 / 依赖 CVE）在接口、流程、故障矩阵、风险登记中均有体现 | Blocker |
 | Q-31 | 全文长度 | 文档总行数尽量 ≤ 1000 行；超出时元信息头有"篇幅放开：执行人 + 日期 + 理由"声明 | Medium |
 | Q-32 | 工程一致性（已有工程） | §2.6 工程一致性表已声明并逐项判定（目录结构 / 命名 / 错误码 / 日志监控 / 基础组件 / 依赖发布 6 项）；偏离项已在 §4 立卡 | High（已有工程时） |
@@ -58,57 +58,59 @@
 10. **破坏性变更无兼容期**：方案涉及破坏性变更但未声明兼容期与下线流程。
 11. **草案模式但 ASMP 未登记**：草案缺信息却不显式登记假设。
 12. **过程内容污染交付**：最终方案文档中出现 TBD 表 / TODO 表 / 完整质量自检表。
-13. **工作目录缺失**：`.tech-design/` 不存在或核心三文件不全。
+13. **工作目录缺失**：`.qiqskills/backend-tech/` 不存在或核心三文件不全。
 
 ## 三、门禁判定（完整产出模式）
 
-按下表机械推导，**结果写入 `.tech-design/quality-check.md`**：
+按下表机械推导，**结果写入 `.qiqskills/backend-tech/quality-check.md`**：
 
 | 条件 | 结果 |
 |---|---|
 | 任一 Blocker 项失败 | **不通过**：文档不可用于评审，必须修复后重审。 |
-| 0 Blocker，但 High ≥ 3 | **有条件通过**：必须在 `.tech-design/quality-check.md` 列出 High 项整改计划与 deadline；评审会上首要议题。 |
+| 0 Blocker，但 High ≥ 3 | **有条件通过**：必须在 `.qiqskills/backend-tech/quality-check.md` 列出 High 项整改计划与 deadline；评审会上首要议题。 |
 | 0 Blocker，High ≤ 2，Medium 不限 | **通过**：可进入正式评审。 |
 
-最终方案元信息头**只写一行结论 + 链接**：
+最终方案元信息头只在 `状态` 行保留门禁结论：
 
-```
-> 质量门禁：✅ 通过 / ⚠️ 有条件通过 / ❌ 不通过（详见 `.tech-design/quality-check.md`）
+```markdown
+> 状态：置信度 高｜门禁 ✅ 通过 / ⚠️ 有条件通过 / ❌ 不通过｜待确认 N 条 TBD / M 条 TODO
+> 过程产物：`.qiqskills/backend-tech/`
 ```
 
 ## 四、门禁判定（草案模式）
 
-不输出"通过 / 不通过"，但**必须**在 `.tech-design/quality-check.md` 中输出：
+不输出"通过 / 不通过"，但**必须**在 `.qiqskills/backend-tech/quality-check.md` 中输出：
 
 - 草案声明（"本文档为草案，置信度 X，不可用于上线评审"）。
-- 已登记的 ASMP- 与 TODO- 清单（链接到 `.tech-design/open-questions.md` 与 `requirements.md`）。
+- 已登记的 ASMP- 与 TODO- 清单（链接到 `.qiqskills/backend-tech/open-questions.md` 与 `requirements.md`）。
 - 完整产出前还需补完的章节列表。
 - 期望补完时间与 owner。
 
 最终方案元信息头：
 
-```
-> 质量门禁：📝 草案模式不出门禁（详见 `.tech-design/quality-check.md`）
+```markdown
+> 状态：置信度 低｜门禁 📝 草案｜待确认 N 条 TBD / M 条 TODO
+> 过程产物：`.qiqskills/backend-tech/`
 ```
 
-## 五、`.tech-design/quality-check.md` 模板
+## 五、`.qiqskills/backend-tech/quality-check.md` 模板
 
 ```markdown
 # 质量自检与门禁结论
 
-> 本文件为过程产物，不属于最终交付。技术方案 元信息头会引用本文件链接。
+> 本文件为过程产物，不属于最终交付。技术方案元信息的 `过程产物` 行会指向 `.qiqskills/backend-tech/`。
 
 ## 一、自检表（Q-1 至 Q-30）
 
 | 编号 | 项目 | 状态 | 备注 |
 |---|---|---|---|
-| Q-1 | 文档元信息齐全 | ✅ | 8 项齐全；变更摘要仅最近两次 |
+| Q-1 | 文档元信息齐全 | ✅ | 标题 + 3 行以内摘要齐全 |
 | Q-2 | 业务目标量化 | ✅ | |
-| Q-3 | FR 摘要表 | ✅ | 共 12 条；详细字段见 .tech-design/requirements.md |
+| Q-3 | FR 摘要表 | ✅ | 共 12 条；详细字段见 .qiqskills/backend-tech/requirements.md |
 | Q-4 | NFR 摘要表（含安全） | ✅ | 共 9 条；NFR-006 越权 + 漏洞 已覆盖 |
 | Q-5 | ASMP 登记 | ⚠️ | 3 条待业务方确认 |
 | ... | ... | ... | ... |
-| Q-24 | 附录与历史信息精简 | ✅ | 无 TOC；无术语表；变更摘要仅 v1.2/v1.3；更早归档至 .tech-design/notes.md |
+| Q-24 | 附录与历史信息精简 | ✅ | 无 TOC；无术语表；无历史变更表；长尾信息归档至 .qiqskills/backend-tech/notes.md |
 | Q-30 | 安全聚焦 | ✅ | 越权 / 漏洞 在接口、流程、5.1 矩阵、7.1 风险均有体现 |
 
 ## 二、统计
@@ -143,16 +145,13 @@
 每次修订：
 
 1. **版本号 +1**（语义化：大改动主版本，小改动子版本，错别字补丁版本）。
-2. 文档头部"变更摘要"补一行：
-   ```
-   v1.2 (2026-05-18) — 张三：补充 D-3 缓存击穿防护；修正 NFR-005 数字；新增 RISK-007。
-   ```
-3. 重新执行本文档的自检，更新 `.tech-design/quality-check.md`，并同步更新方案元信息头的门禁摘要。
+2. 将本次 diff 写入 `.qiqskills/backend-tech/notes.md` 的「历史变更归档」小节，最终方案正文不展开变更摘要表。
+3. 重新执行本文档的自检，更新 `.qiqskills/backend-tech/quality-check.md`，并同步更新方案元信息 `状态` 行的门禁摘要。
 
 ## 七、强制约束
 
 - **不允许"看情况" / "视情况"**：所有判定必须基于上方表格的客观字段。
 - **Blocker 不可豁免**：等同于"文档未达标"。
 - **草案模式不可越级**：声明草案的方案不得在评审会上作为决策依据，仅供讨论。
-- **修复后必须重审**：任一 Blocker / High 整改后，需重新跑完 Q-1 至 Q-30 的检查并更新 `.tech-design/quality-check.md`。
-- **质量自检不污染交付**：所有详细自检表、整改计划只在 `.tech-design/quality-check.md`，技术方案文档仅在元信息头给一行结论。
+- **修复后必须重审**：任一 Blocker / High 整改后，需重新跑完 Q-1 至 Q-30 的检查并更新 `.qiqskills/backend-tech/quality-check.md`。
+- **质量自检不污染交付**：所有详细自检表、整改计划只在 `.qiqskills/backend-tech/quality-check.md`，技术方案文档仅在元信息 `状态` 行保留门禁结论。
