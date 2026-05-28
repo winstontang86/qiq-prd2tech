@@ -2,7 +2,7 @@
 
 ## 章节目标
 
-用一张架构图、一份组件清单、一份数据流图，让读者 5 分钟看懂"系统长什么样、谁负责什么、数据怎么流"。本章不展开实现细节，只确立"骨架"。
+用一张架构图、一份组件清单、一份交互方式说明，让读者 5 分钟看懂"系统长什么样、谁负责什么、数据怎么流"。本章不展开实现细节，只确立"骨架"。
 
 ## 必写小节
 
@@ -59,38 +59,7 @@ flowchart LR
 | 熔断 | 错误率 > 30% 触发，半开 30s |
 | 鉴权 | 内部 Service Mesh mTLS / OAuth2 / 签名 |
 
-### 2.4 数据流图（关键业务场景）
 
-至少为 **每个 P0 级 FR** 画一张数据流图（可用 Mermaid `sequenceDiagram`）。
-
-**Mermaid 时序图示例**：
-
-```mermaid
-sequenceDiagram
-    participant C as 客户端
-    participant G as 网关
-    participant O as 订单服务
-    participant I as 库存服务
-    participant DB as 订单DB
-    participant MQ as RocketMQ
-
-    C->>G: POST /orders
-    G->>O: createOrder(req)
-    O->>I: deductStock(skuId, qty) [同步, 超时500ms]
-    I-->>O: ok / fail
-    alt 扣减成功
-        O->>DB: insert orders
-        O-->>MQ: publish order_created (异步)
-        O-->>G: 200 + orderId
-    else 扣减失败
-        O-->>G: 4xx 库存不足
-    end
-```
-
-每张图配文字说明：
-- 这个流程对应哪些 FR / NFR。
-- 关键决策点（如同步还是异步、强一致还是最终一致）的理由。
-- 异常分支（已在图中体现）。
 
 ### 2.5 合入视图与变更清单
 
@@ -149,7 +118,6 @@ flowchart LR
 - [ ] 同步 / 异步、跨机房边界在图中显式标注。
 - [ ] 组件清单表覆盖所有图中节点，且每个组件有明确职责与 SLA。
 - [ ] 关键交互链路全部明确协议、超时、重试、限流、熔断、鉴权 7 项。
-- [ ] 每个 P0 FR 都有对应数据流图，且包含异常分支。
 - [ ] 已给出"加上本需求后的整体架构图（合入视图）"，且用 `[新增]` / `[修改]` / `[复用]` 文本标记区分变更动作。
 - [ ] 已给出"新增 / 修改 / 复用清单"表，逐条覆盖服务、模块、存储、MQ、缓存命名空间。
 - [ ] 已有工程：§2.6 工程一致性表已声明并逐项判定；偏离项已在 §4 立卡。

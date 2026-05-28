@@ -193,7 +193,40 @@ Step 5 — 异常补偿（独立常驻任务）
   - 频率：每 10 秒一次
 ```
 
-### 3.4 状态机设计
+### 3.4 数据流图（关键业务场景）
+
+至少为 **每个 P0 级 FR** 画一张数据流图（可用 Mermaid `sequenceDiagram`）。
+
+**Mermaid 时序图示例**：
+
+```mermaid
+sequenceDiagram
+    participant C as 客户端
+    participant G as 网关
+    participant O as 订单服务
+    participant I as 库存服务
+    participant DB as 订单DB
+    participant MQ as RocketMQ
+
+    C->>G: POST /orders
+    G->>O: createOrder(req)
+    O->>I: deductStock(skuId, qty) [同步, 超时500ms]
+    I-->>O: ok / fail
+    alt 扣减成功
+        O->>DB: insert orders
+        O-->>MQ: publish order_created (异步)
+        O-->>G: 200 + orderId
+    else 扣减失败
+        O-->>G: 4xx 库存不足
+    end
+```
+
+每张图配文字说明：
+- 这个流程对应哪些 FR / NFR。
+- 关键决策点（如同步还是异步、强一致还是最终一致）的理由。
+- 异常分支（已在图中体现）。
+
+### 3.5 状态机设计
 
 **涉及状态流转的实体**必须给出状态图（Mermaid `stateDiagram-v2`）+ 流转表。状态 ID 使用英文大写或下划线；事件文本保持短句；复杂条件放到流转表，避免在图中写长文本、HTML 标签或 emoji。
 
@@ -228,6 +261,7 @@ stateDiagram-v2
 - [ ] 至少提供 1 个 OpenAPI/proto 片段。
 - [ ] 每个 P0 流程按 Step 模板写完，每步包含输入 / 输出 / 异常 / 超时 / 幂等；涉及鉴权步骤显式标注资源归属校验。
 - [ ] 流程必须包含异常路径与补偿路径，不只 happy path。
+- [ ] 每个 P0 FR 都有对应数据流图，且包含异常分支。
 - [ ] 状态机实体给出状态图 + 流转表，包含守卫条件与副作用。
 - [ ] 所有字段、表名、组件名与第 2 章保持一致（术语统一）。
 
