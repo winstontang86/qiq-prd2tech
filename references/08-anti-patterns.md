@@ -75,7 +75,7 @@
 
 ### 修正
 1. 全文统一一个名字，其它别名只在首次出现处用括号注明（如"订单（order）"）。
-2. 必要的中英文映射就近括注；如确有大量缩写需登记，集中放到 `.qiqskills/backend-tech/notes.md`，**不在最终方案中单列术语表**。
+2. 必要的中英文映射就近括注；如确有大量缩写需登记，集中放到 `.qiqskills/backend-tech/<方案名>/notes.md`，**不在最终方案中单列术语表**。
 3. 用工具 / Ctrl+F 全文搜索，机械替换。
 
 ## F. 需求脱钩（Design without Requirements）
@@ -176,7 +176,7 @@
 
 ### 修正
 1. 第 1 章"组织依赖"列出所有需要外部团队配合的事项。
-2. `.qiqskills/backend-tech/open-questions.md` 中 TBD 登记跨团队待办，给出期望确认时间与跟踪 owner（不写进最终方案文档）。
+2. `.qiqskills/backend-tech/<方案名>/open-questions.md` 中 TBD 登记跨团队待办，给出期望确认时间与跟踪 owner（不写进最终方案文档）。
 
 ## M. 越权盲区（Authorization Blindspot）
 
@@ -227,7 +227,7 @@
 - 同一信息在多处重复，修订时容易不一致。
 
 ### 修正
-1. `.qiqskills/backend-tech/` 工作目录归档：`requirements.md`（详细需求）、`quality-check.md`（自检与门禁）、`open-questions.md`（TBD / TODO）、`notes.md`（其他过程产物）。
+1. `.qiqskills/backend-tech/<方案名>/` 方案工作目录归档：`requirements.md`（详细需求）、`quality-check.md`（自检与门禁）、`open-questions.md`（TBD / TODO）、`notes.md`（其他过程产物）。
 2. 最终方案中**仅保留**：业务背景摘要、FR / NFR 摘要表、约束与假设要点、架构与详细设计、关键决策、可用性与容错、部署运维要点、风险登记表。
 3. 元信息头放门禁结论摘要 + TBD/TODO 条数摘要，正文不展开。
 4. Step 7 一致性与篇幅微调阶段强制清理过程性内容残留。
@@ -243,12 +243,12 @@
 ### 危害
 - 附录喧宾夺主，正文与索引比例失调。
 - 历史信息堆积导致评审者抓不到本次重点。
-- 同一信息在 `.qiqskills/backend-tech/notes.md` 与正文附录中两处维护，容易不一致。
+- 同一信息在 `.qiqskills/backend-tech/<方案名>/notes.md` 与正文附录中两处维护，容易不一致。
 
 ### 修正
-1. 最终方案不保留历史变更表；所有版本变更写入 `.qiqskills/backend-tech/notes.md` 的「历史变更归档」。
-2. 演进方向、参考资料、旧设计、评审纪要等长尾信息归档到 `.qiqskills/backend-tech/notes.md`，附录只留必要索引。
-3. 每个附录小节正文 ≤ 10 行；超过即重构为"概要 + 链接到 `.qiqskills/backend-tech/notes.md`"。
+1. 最终方案不保留历史变更表；所有版本变更写入 `.qiqskills/backend-tech/<方案名>/notes.md` 的「历史变更归档」。
+2. 演进方向、参考资料、旧设计、评审纪要等长尾信息归档到 `.qiqskills/backend-tech/<方案名>/notes.md`，附录只留必要索引。
+3. 每个附录小节正文 ≤ 10 行；超过即重构为"概要 + 链接到 `.qiqskills/backend-tech/<方案名>/notes.md`"。
 4. 术语表本身不在最终方案中保留（详见 E 项），P 项不重复处理。
 5. **不生成章节目录（TOC）**：删除任何"本文目录 / Table of Contents"段落，章节定位靠标题层级。
 6. Step 7 一致性与篇幅微调阶段强制清理。
@@ -266,7 +266,7 @@
 - 阻断级问题被遗漏，方案看似已修订但仍不可评审。
 
 ### 修正
-1. 将用户反馈拆成 `FB-001`、`FB-002`…，记录到 `.qiqskills/backend-tech/notes.md`，逐条标注处理结论。
+1. 将用户反馈拆成 `FB-001`、`FB-002`…，记录到 `.qiqskills/backend-tech/<方案名>/notes.md`，逐条标注处理结论。
 2. 修改范围只覆盖用户反馈点、直接一致性影响和明确 Blocker；其他优化建议先登记到 notes，不进入本轮正文。
 3. 修改后完整执行 Step 4 / Step 5 / Step 7；可自行修复的 Blocker 必须修复后再交付，依赖外部信息的登记为 ASMP / TBD。
 
@@ -276,7 +276,7 @@
 - 最终技术方案文档超过 1000 行，但没有人工确认放开。
 - 已超过 1000 行，却仍把多个相对独立功能模块写在同一篇文档中。
 - 功能本身单一但实现链路很长时，没有按实现步骤 / 落地阶段拆分。
-- 元信息 `状态` 行没有 `篇幅放开：确认人 + 日期 + 理由`，`.qiqskills/backend-tech/notes.md` 也没有确认依据。
+- 元信息 `状态` 行没有 `篇幅放开：确认人 + 日期 + 理由`，`.qiqskills/backend-tech/<方案名>/notes.md` 也没有确认依据。
 
 ### 危害
 - 单篇文档过长，评审者难以聚焦核心链路和关键决策。
@@ -286,7 +286,7 @@
 ### 修正
 1. 先执行 Step 7 篇幅收敛：合并重复段落、长尾枚举外移、操作手册化内容归档、精简第 1 / 6 章和附录。
 2. 收敛后仍超过 1000 行且无人工确认时，必须拆分：优先按相对独立的功能模块拆分；功能单一时按实现步骤 / 落地阶段拆分。
-3. 若人工明确确认允许单篇超过 1000 行，在元信息 `状态` 行标注 `篇幅放开：确认人 + 日期 + 理由`，并把确认依据写入 `.qiqskills/backend-tech/notes.md`。
+3. 若人工明确确认允许单篇超过 1000 行，在元信息 `状态` 行标注 `篇幅放开：确认人 + 日期 + 理由`，并把确认依据写入 `.qiqskills/backend-tech/<方案名>/notes.md`。
 
 ## 自检流程
 

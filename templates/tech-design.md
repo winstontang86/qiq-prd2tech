@@ -2,13 +2,13 @@
 
 > 元信息：v1.0｜YYYY-MM-DD｜{作者}｜{完整产出 / 草案}
 > 状态：置信度 {高 / 中 / 低}｜门禁 {✅ 通过 / ⚠️ 有条件通过 / ❌ 不通过 / 📝 草案}｜待确认 {N 条 TBD / M 条 TODO}{｜篇幅放开：确认人 + 日期 + 理由（仅单篇超过 1000 行且人工确认时保留）}
-> 过程产物：`.qiqskills/backend-tech/`（需求、门禁、待确认、历史变更）
+> 过程产物：`.qiqskills/backend-tech/<方案名>/`（需求、门禁、待确认、历史变更）
 
 ---
 
 ## 第 1 章 需求分析（精简）
 
-> 本章为摘要形态。FR / NFR / 约束 / 假设的完整字段（描述、验收标准、来源等）保存在 `.qiqskills/backend-tech/requirements.md`，本章仅列摘要 + 关键数字。
+> 本章为摘要形态。FR / NFR / 约束 / 假设的完整字段（描述、验收标准、来源等）保存在 `.qiqskills/backend-tech/<方案名>/requirements.md`，本章仅列摘要 + 关键数字。
 
 ### 1.1 业务背景与目标
 
@@ -20,7 +20,7 @@
 |---|---|---|---|
 | FR-001 | | P0 | |
 
-> 完整字段（描述、输入输出、来源等）见 `.qiqskills/backend-tech/requirements.md`。
+> 完整字段（描述、输入输出、来源等）见 `.qiqskills/backend-tech/<方案名>/requirements.md`。
 
 ### 1.3 非功能性需求摘要（NFR）
 
@@ -39,7 +39,7 @@
 ### 1.4 约束与假设要点
 
 - **关键约束**（要点列出）：技术栈 / 团队 / 时间窗 / 预算 / 组织依赖。
-- **关键假设摘要**：共 N 条 ASMP，影响最大的 ≤ 3 条要点列出；完整列表见 `.qiqskills/backend-tech/requirements.md`。
+- **关键假设摘要**：共 N 条 ASMP，影响最大的 ≤ 3 条要点列出；完整列表见 `.qiqskills/backend-tech/<方案名>/requirements.md`。
 
 ### 1.5 边界声明
 
@@ -354,7 +354,7 @@ sequenceDiagram
 
 ## 第 6 章 部署与运维（简要提及）
 
-> 本章为**要点级**描述，不展开为操作手册。详细发布 SOP、扩缩容预案、配置项明细、上线 Checklist 不在本章呈现，按需放入独立 SOP 文档或 `.qiqskills/backend-tech/notes.md`。
+> 本章为**要点级**描述，不展开为操作手册。详细发布 SOP、扩缩容预案、配置项明细、上线 Checklist 不在本章呈现，按需放入独立 SOP 文档或 `.qiqskills/backend-tech/<方案名>/notes.md`。
 
 ### 6.1 部署形态要点
 
@@ -389,7 +389,7 @@ sequenceDiagram
 
 ## 第 7 章 风险登记
 
-> 本章只列**已识别风险（RISK-）**。**待确认事项（TBD）与待补全事项（TODO）不在本章**，统一登记在 `.qiqskills/backend-tech/open-questions.md`，并在元信息头给出条数摘要。
+> 本章只列**已识别风险（RISK-）**。**待确认事项（TBD）与待补全事项（TODO）不在本章**，统一登记在 `.qiqskills/backend-tech/<方案名>/open-questions.md`，并在元信息头给出条数摘要。
 
 ### 7.1 已识别风险（RISK）
 
@@ -403,7 +403,7 @@ sequenceDiagram
 
 ## 附录（保持精简）
 
-> 附录是**索引**而非内容仓库。每个附录小节正文 ≤ 10 行；历史变更、评审纪要全集等长尾信息归档到 `.qiqskills/backend-tech/notes.md`，附录中只保留一行链接引用。
+> 附录是**索引**而非内容仓库。每个附录小节正文 ≤ 10 行；历史变更、评审纪要全集等长尾信息归档到 `.qiqskills/backend-tech/<方案名>/notes.md`，附录中只保留一行链接引用。
 
 ### 附录 A：演进方向（Optional）
 
@@ -416,6 +416,6 @@ sequenceDiagram
 - PRD：
 - 业务方会议纪要（最近一次）：
 - 历史监控大盘：
-- 工作目录：`.qiqskills/backend-tech/`（含 `requirements.md` / `quality-check.md` / `open-questions.md` / `notes.md`）
+- 方案工作目录：`.qiqskills/backend-tech/<方案名>/`（含 `requirements.md` / `quality-check.md` / `open-questions.md` / `notes.md`）
 
-> 更早的历史资料、被取代的旧设计文档、历次评审纪要全集见 `.qiqskills/backend-tech/notes.md` 的「历史归档」小节。
+> 更早的历史资料、被取代的旧设计文档、历次评审纪要全集见 `.qiqskills/backend-tech/<方案名>/notes.md` 的「历史归档」小节。
