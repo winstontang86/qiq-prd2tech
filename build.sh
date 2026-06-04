@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# build.sh — 将 qiq-backend-tech skill 打包为 zip。
+# build.sh — 将 qiq-prd2tech skill 打包为 zip。
 #
 # 用法：
-#   ./build.sh                  # 打包到 dist/qiq-backend-tech-<timestamp>.zip
+#   ./build.sh                  # 打包到 dist/qiq-prd2tech-<timestamp>.zip
 #   ./build.sh -o out.zip       # 指定输出文件
 #   ./build.sh -v 1.2.0         # 指定版本号（用于命名）
-#   ./build.sh --install        # 打包后安装到 ~/.codebuddy/skills/qiq-backend-tech
+#   ./build.sh --install        # 打包后安装到 ~/.codebuddy/skills/qiq-prd2tech
 #   ./build.sh --keep-old       # 保留 dist 目录下的历史 zip（默认会清理，仅保留最新）
 #
 # 默认包含的内容：
@@ -20,13 +20,13 @@
 #   3. 输出文件清单与字节统计
 #
 # 打包后默认行为：
-#   清理 dist/ 目录下旧的 qiq-backend-tech-*.zip，仅保留本次产出的最新 zip。
+#   清理 dist/ 目录下旧的 qiq-prd2tech-*.zip，仅保留本次产出的最新 zip。
 #   通过 --keep-old 可关闭此清理行为。
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SKILL_NAME="qiq-backend-tech"
+SKILL_NAME="qiq-prd2tech"
 
 OUTPUT=""
 VERSION=""

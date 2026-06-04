@@ -8,19 +8,19 @@
 
 需求采集与撰写分两层，避免最终方案文档被冗长字段占满：
 
-1. **过程层（详细）**：所有详细字段写入方案工作目录 `.qiqskills/backend-tech/<方案名>/requirements.md`，按 [@references/00-requirements-template.md](00-requirements-template.md) 全字段填写。这一层是评审/回溯的事实库。
+1. **过程层（详细）**：所有详细字段写入方案工作目录 `.qiqskills/<方案名>/requirements.md`，按 [@references/00-requirements-template.md](00-requirements-template.md) 全字段填写。这一层是评审/回溯的事实库。
 2. **交付层（精简）**：在最终技术方案的"第 1 章 需求分析"中**只放摘要 + 关键数字 + 链接**，不重复展开。摘要要求：
    - 业务背景：1 段，≤ 5 句，含可量化目标。
    - FR 摘要表：编号 / 标题 / 优先级 / 验收关键指标（一行）。
    - NFR 摘要表：编号 / 维度 / 关键数字（一行）。
-   - 约束与假设：仅以要点列出影响最大的 ≤ 5 条，其余条目链接到 `.qiqskills/backend-tech/<方案名>/requirements.md`。
+   - 约束与假设：仅以要点列出影响最大的 ≤ 5 条，其余条目链接到 `.qiqskills/<方案名>/requirements.md`。
    - 边界声明：覆盖 / 不覆盖 / 上下游边界。
 
-> 撰写时**先**完整填写 `.qiqskills/backend-tech/<方案名>/requirements.md`，**再**将摘要复制到方案第 1 章。绝不允许跳过详细字段直接写摘要。
+> 撰写时**先**完整填写 `.qiqskills/<方案名>/requirements.md`，**再**将摘要复制到方案第 1 章。绝不允许跳过详细字段直接写摘要。
 
 ## 方案工作目录详细字段要求
 
-详细字段按下列规范填写到 `.qiqskills/backend-tech/<方案名>/requirements.md`：
+详细字段按下列规范填写到 `.qiqskills/<方案名>/requirements.md`：
 
 ### 业务背景与目标
 - **3 句话以内** 讲清楚：当前在哪里 / 痛点是什么 / 期望到哪里。
@@ -101,11 +101,11 @@
 | 验证方式 | 何时、由谁、用什么手段验证 |
 | 当前状态 | 待确认 / 已确认 / 已推翻 |
 
-> 同样需要业务方决策但暂时未答的事项，应同时登记到 `.qiqskills/backend-tech/<方案名>/open-questions.md` 的 TBD 表中，避免遗漏。
+> 同样需要业务方决策但暂时未答的事项，应同时登记到 `.qiqskills/<方案名>/open-questions.md` 的 TBD 表中，避免遗漏。
 
 ## Checklist（撰写完逐条勾选）
 
-方案工作目录 `.qiqskills/backend-tech/<方案名>/requirements.md`：
+方案工作目录 `.qiqskills/<方案名>/requirements.md`：
 
 - [ ] 业务目标可量化，无虚词。
 - [ ] FR 全部按统一字段写完，无"待补充"。
@@ -119,7 +119,7 @@
 
 - [ ] 业务背景为 1 段摘要，含可量化目标。
 - [ ] FR / NFR 摘要表只有"编号 / 关键字段 / 一行内容"，无大段描述。
-- [ ] 约束与假设以要点形式列出，详细字段链接到 `.qiqskills/backend-tech/<方案名>/requirements.md`。
+- [ ] 约束与假设以要点形式列出，详细字段链接到 `.qiqskills/<方案名>/requirements.md`。
 - [ ] 安全维度（越权 / 漏洞）已在 NFR 摘要中显式提及。
 - [ ] 整章篇幅占整篇文档 ≤ 15%。
 
@@ -129,5 +129,5 @@
 - ❌ FR 没有验收标准 — 验收时必扯皮。
 - ❌ NFR 全靠拍脑袋 — 必须给出基线数据来源（业务方 / 历史监控 / 类比系统）。
 - ❌ 假设不登记 — 假设不成立时无人负责。
-- ❌ 把详细字段直接写进最终方案 — 第 1 章应当精简，让评审者快速对齐目标，详细字段去 `.qiqskills/backend-tech/<方案名>/requirements.md` 查。
+- ❌ 把详细字段直接写进最终方案 — 第 1 章应当精简，让评审者快速对齐目标，详细字段去 `.qiqskills/<方案名>/requirements.md` 查。
 - ❌ NFR 安全维度只写"等保三级"——必须显式覆盖越权与常见漏洞。
