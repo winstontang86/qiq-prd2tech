@@ -17,7 +17,8 @@
 # 打包前自动执行：
 #   1. 校验所有必需文件存在
 #   2. 校验 SKILL.md 中引用的 references / templates 路径都能找到对应文件
-#   3. 输出文件清单与字节统计
+#   3. 反向校验 references/ 与 templates/ 目录下的文件都已纳入打包清单（防止新增文件遗漏）
+#   4. 输出文件清单与字节统计
 #
 # 打包后默认行为：
 #   清理 dist/ 目录下旧的 qiq-prd2tech-*.zip，仅保留本次产出的最新 zip。
@@ -27,9 +28,14 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_NAME="qiq-prd2tech"
+SKILL_VERSION=""
+
+# 从 SKILL.md frontmatter 中自动提取版本号
+if [[ -f "${SCRIPT_DIR}/SKILL.md" ]]; then
+    SKILL_VERSION="$(sed -n '/^version:[[:space:]]*/{s/^version:[[:space:]]*//;p;q}' "${SCRIPT_DIR}/SKILL.md" 2>/dev/null || true)"
+fi
 
 OUTPUT=""
-VERSION=""
 INSTALL=false
 KEEP_OLD=false
 INSTALL_DIR="${HOME}/.codebuddy/skills/${SKILL_NAME}"
@@ -59,7 +65,7 @@ usage() {
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -o|--output)  OUTPUT="$2"; shift 2 ;;
-        -v|--version) VERSION="$2"; shift 2 ;;
+        -v|--version) SKILL_VERSION="$2"; shift 2 ;;
         --install)    INSTALL=true; shift ;;
         --keep-old)   KEEP_OLD=true; shift ;;
         -h|--help)    usage ;;
@@ -77,6 +83,7 @@ REQUIRED_FILES=(
     "SKILL.md"
     "LICENSE"
     "references/00-requirements-template.md"
+    "references/00b-brief-review-template.md"
     "references/01-requirements-analysis.md"
     "references/02-architecture-overview.md"
     "references/03-detailed-design.md"
@@ -87,6 +94,7 @@ REQUIRED_FILES=(
     "references/08-anti-patterns.md"
     "references/09-quality-gate.md"
     "templates/tech-design.md"
+    "templates/brief-design.md"
 )
 
 MISSING=0
@@ -120,13 +128,37 @@ if [[ $BROKEN -gt 0 ]]; then
 fi
 ok "SKILL.md 引用路径全部有效"
 
+# ---------- 反向校验：references/ 与 templates/ 下是否存在未纳入打包清单的文件 ----------
+log "反向校验 references/ 与 templates/ 目录下的实际文件是否都在 REQUIRED_FILES 清单中..."
+ORPHAN=0
+while IFS= read -r -d '' actual_file; do
+    rel_path="${actual_file#./}"
+    FOUND=false
+    for f in "${REQUIRED_FILES[@]}"; do
+        if [[ "$f" == "$rel_path" ]]; then
+            FOUND=true
+            break
+        fi
+    done
+    if [[ "$FOUND" == false ]]; then
+        err "发现未纳入 REQUIRED_FILES 打包清单的文件: $rel_path（新增文件请同步加入 build.sh 的 REQUIRED_FILES）"
+        ORPHAN=$((ORPHAN + 1))
+    fi
+done < <(find references templates -maxdepth 1 -type f -name "*.md" -print0)
+
+if [[ $ORPHAN -gt 0 ]]; then
+    err "共 $ORPHAN 个文件未纳入打包清单，构建终止"
+    exit 1
+fi
+ok "references/ 与 templates/ 下所有文件均已纳入打包清单"
+
 # ---------- 确定输出路径 ----------
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 mkdir -p dist
 
 if [[ -z "$OUTPUT" ]]; then
-    if [[ -n "$VERSION" ]]; then
-        OUTPUT="dist/${SKILL_NAME}-v${VERSION}.zip"
+    if [[ -n "$SKILL_VERSION" ]]; then
+        OUTPUT="dist/${SKILL_NAME}-v${SKILL_VERSION}.zip"
     else
         OUTPUT="dist/${SKILL_NAME}-${TIMESTAMP}.zip"
     fi
@@ -161,6 +193,11 @@ for f in "${REQUIRED_FILES[@]}"; do
     install -D "$f" "${STAGING}/${SKILL_NAME}/$f"
 done
 
+# 写入 VERSION.txt
+if [[ -n "$SKILL_VERSION" ]]; then
+    echo "${SKILL_VERSION}" > "${STAGING}/${SKILL_NAME}/VERSION.txt"
+fi
+
 (
     cd "$STAGING"
     zip -qr "$OUTPUT" "$SKILL_NAME" \
@@ -172,6 +209,9 @@ SIZE_BYTES=$(wc -c < "$OUTPUT" | tr -d ' ')
 SIZE_HUMAN=$(numfmt --to=iec-i --suffix=B "$SIZE_BYTES" 2>/dev/null || echo "${SIZE_BYTES}B")
 
 ok "构建完成"
+if [[ -n "$SKILL_VERSION" ]]; then
+    log "版本: v${SKILL_VERSION}"
+fi
 log "输出: $OUTPUT"
 log "大小: $SIZE_HUMAN ($SIZE_BYTES bytes)"
 log "内容清单:"
