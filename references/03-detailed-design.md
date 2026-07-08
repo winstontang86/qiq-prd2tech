@@ -30,35 +30,32 @@
 
 #### 3.1.1 数据库表结构（如使用 RDBMS）
 
-**每张表**必须给出建表 DDL，并补充：
+**每张表**必须给出**字段级结构表**（不要求提供可执行 DDL），并补充：
 
-- 表名、主键、字符集、引擎。
-- 字段：名称、类型、是否可空、默认值、含义、来源 FR/NFR。
+- 表名、主键、字符集 / 引擎（要点列出）。
+- 字段表：名称、类型、是否可空、默认值、含义、来源 FR/NFR。
 - 索引：字段组合、索引类型、命中查询场景、预计选择度。
 - 容量估算：单行字节数 × 1 年预期行数 = 总容量。
 - 分库分表策略（如 sharding key、分片数、路由规则）。
 
-**DDL 示例**：
+> **不写可执行代码片段**：表结构以字段表呈现，不要求给出可直接执行的 `CREATE TABLE` 语句——具体 DDL 语法（字符集 / 引擎 / 字段精度等）容易与仓库真实迁移脚本、ORM 模型或既有规范不一致，误导开发直接照抄。如确需示意整体结构，可用简化伪代码替代完整 SQL，并标注"示意，非最终实现"。
 
-```sql
-CREATE TABLE orders (
-    id            BIGINT      UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '订单主键',
-    order_no      VARCHAR(32) NOT NULL                          COMMENT '业务订单号',
-    user_id       BIGINT      UNSIGNED NOT NULL                 COMMENT '用户ID',
-    status        TINYINT     NOT NULL DEFAULT 0                COMMENT '0=待支付 1=已支付 2=已取消',
-    amount_cents  BIGINT      NOT NULL                          COMMENT '订单金额，单位分',
-    created_at    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    updated_at    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
-    PRIMARY KEY (id),
-    UNIQUE KEY uk_order_no (order_no),
-    KEY idx_user_created (user_id, created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单主表';
-```
+**字段表示例（订单主表）**：
+
+| 字段名 | 类型 | 可空 | 默认值 | 含义 | 来源 |
+|---|---|---|---|---|---|
+| id | BIGINT UNSIGNED | 否 | 自增 | 订单主键 | — |
+| order_no | VARCHAR(32) | 否 | — | 业务订单号 | FR-001 |
+| user_id | BIGINT UNSIGNED | 否 | — | 用户 ID | FR-001 |
+| status | TINYINT | 否 | 0 | 0=待支付 1=已支付 2=已取消 | FR-002 |
+| amount_cents | BIGINT | 否 | — | 订单金额，单位分 | FR-001 |
+| created_at | DATETIME(3) | 否 | 当前时间 | 创建时间 | — |
+
+索引：`uk_order_no`（唯一，order_no，命中订单号精确查询）；`idx_user_created`（user_id + created_at，命中用户订单列表，预计选择度单用户 < 200 行，可命中）。
 
 补充说明：
 - 单行 ≈ 200 字节，1 年 5 亿行 ≈ 100GB（NFR-006 容量评估）。
 - 分片：按 `user_id % 32` 分 32 库，每库 ≈ 3GB，单库 1500 万行。
-- 索引选择度评估：`idx_user_created` 单用户平均 < 200 行，可命中。
 
 #### 3.1.2 缓存数据结构（如使用缓存）
 
@@ -121,41 +118,9 @@ CREATE TABLE orders (
 | ORDER_5001 | 503 | 下游依赖暂不可用 | 指数退避重试 ≤ 3 次 |
 | ORDER_5002 | 504 | 超时但不确定结果 | 用同 Idempotency-Key 重试 |
 
-#### 3.2.2 OpenAPI / proto 片段
+#### 3.2.2 接口契约补充说明（不要求可执行 OpenAPI / proto 代码片段）
 
-至少给出 1 个核心接口的 OpenAPI / proto 片段示例，便于评审：
-
-```yaml
-paths:
-  /v1/orders:
-    post:
-      summary: 创建订单
-      parameters:
-        - in: header
-          name: Idempotency-Key
-          required: true
-          schema: { type: string, maxLength: 64 }
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [skuId, quantity]
-              properties:
-                skuId:    { type: string }
-                quantity: { type: integer, minimum: 1, maximum: 100 }
-      responses:
-        '200':
-          description: 创建成功
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  orderNo: { type: string }
-                  amount:  { type: integer }
-```
+核心接口的入参 / 出参结构已在 §3.2.1 契约表中字段级描述，足以支撑评审，**不强制**提供 OpenAPI / proto 代码片段——实际 schema 应以仓库既有契约管理方式（IDL 文件、契约仓库、网关配置等）为准，方案里重复编写容易与真实实现产生出入、误导直接照抄。若入参 / 出参存在复杂嵌套结构，可用**简化字段树 / 伪代码**示意层级关系，并标注"示意，非最终 schema"，不追求语法可执行。
 
 ### 3.3 核心流程与数据流图
 
@@ -275,11 +240,10 @@ sequenceDiagram
 ## Checklist
 
 - [ ] 已有系统演进：§3 所有关键对象（存储、缓存、MQ、DTO、接口、流程含数据流图、状态机（如保留））已标注 `[新增]` / `[修改]` / `[复用]`，且与 §2.1 / §2.2 一致。
-- [ ] **关键存储**全部覆盖：每张关键表给出 DDL + 索引说明 + 容量估算 + 分片策略；每个关键缓存 key / NoSQL Schema / MQ 主题给出对应字段表。
+- [ ] **关键存储**全部覆盖：每张关键表给出字段表（不要求可执行 DDL）+ 索引说明 + 容量估算 + 分片策略；每个关键缓存 key / NoSQL Schema / MQ 主题给出对应字段表。
 - [ ] **关键数据结构**已列出（跨模块 DTO / 事件体 / 状态对象 / 缓存 value），含序列化、大小估算、兼容性策略。
 - [ ] 缓存 key 给出命名规范、TTL、容量、击穿/穿透/雪崩防护。
-- [ ] 每个接口给出入参 / 出参 / 错误码 / 幂等 / 限流 / **鉴权三要素（身份 + 资源归属 + 角色）** / **输入校验** / **错误回显策略** / 兼容性。
-- [ ] 至少提供 1 个 OpenAPI/proto 片段。
+- [ ] 每个接口给出入参 / 出参 / 错误码 / 幂等 / 限流 / **鉴权三要素（身份 + 资源归属 + 角色）** / **输入校验** / **错误回显策略** / 兼容性；均以契约表呈现，不要求可执行 OpenAPI/proto 代码片段。
 - [ ] 每个 P0 流程在 §3.3 一处给出：Step 模板（输入 / 输出 / 异常 / 超时 / 幂等，涉及鉴权显式标注资源归属校验）+ 一张 `sequenceDiagram` 数据流图，覆盖异常路径与补偿路径，不只 happy path。
 - [ ] Step 描述与数据流图描述同一条链路，参与方、关键调用、读写点一致，无两处重复或漂移。
 - [ ] 若存在明显状态机强相关实体，§3.4 已保留并给出流转表（状态图可选），包含守卫条件与副作用；若不存在，最终方案已省略 §3.4。
@@ -287,7 +251,8 @@ sequenceDiagram
 
 ## 反模式
 
-- ❌ **DDL 没索引** — 评审时无法判断查询是否命中。
+- ❌ **字段表没索引说明** — 评审时无法判断查询是否命中。
+- ❌ **编造/挪用可执行代码片段（DDL、接口实现、配置文件语法等）当作最终实现** — 容易跟仓库真实规范、既有代码或最终落地产生出入，误导开发直接照抄；应改用字段表 / 契约表或标注"示意"的简化伪代码。
 - ❌ **接口字段没约束** — `name: string` 不写最大长度，攻击面无限。
 - ❌ **错误码"待补充"** — 客户端无法实现重试策略。
 - ❌ **流程只写 happy path** — 真实故障必出问题。
