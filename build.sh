@@ -2,11 +2,13 @@
 # build.sh — 将 qiq-prd2tech skill 打包为 zip。
 #
 # 用法：
-#   ./build.sh                  # 打包到 dist/qiq-prd2tech-<timestamp>.zip
-#   ./build.sh -o out.zip       # 指定输出文件
-#   ./build.sh -v 1.2.0         # 指定版本号（用于命名）
-#   ./build.sh --install        # 打包后安装到 ~/.codebuddy/skills/qiq-prd2tech
-#   ./build.sh --keep-old       # 保留 dist 目录下的历史 zip（默认会清理，仅保留最新）
+#   ./build.sh                      # 自动递增 patch 版本并打包（写回 SKILL.md）
+#   ./build.sh --bump-type minor     # 递增 minor 版本（也可为 major）
+#   ./build.sh -o out.zip            # 指定输出文件
+#   ./build.sh -v 1.2.0              # 显式指定版本（写回 SKILL.md，不递增）
+#   ./build.sh --no-bump             # 沿用当前版本，不递增也不写回
+#   ./build.sh --install             # 打包后安装到 ~/.codebuddy/skills/qiq-prd2tech
+#   ./build.sh --keep-old            # 保留 dist 目录下的历史 zip（默认会清理，仅保留最新）
 #
 # 默认包含的内容：
 #   SKILL.md
@@ -29,11 +31,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_NAME="qiq-prd2tech"
 SKILL_VERSION=""
-
-# 从 SKILL.md frontmatter 中自动提取版本号
-if [[ -f "${SCRIPT_DIR}/SKILL.md" ]]; then
-    SKILL_VERSION="$(sed -n '/^version:[[:space:]]*/{s/^version:[[:space:]]*//;p;q}' "${SCRIPT_DIR}/SKILL.md" 2>/dev/null || true)"
-fi
+BUMP_TYPE="patch"   # 自动递增时使用：patch | minor | major
+NO_BUMP=false        # true 时沿用当前版本，不递增也不写回 SKILL.md
 
 OUTPUT=""
 INSTALL=false
@@ -64,10 +63,12 @@ usage() {
 # ---------- 解析参数 ----------
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        -o|--output)  OUTPUT="$2"; shift 2 ;;
-        -v|--version) SKILL_VERSION="$2"; shift 2 ;;
-        --install)    INSTALL=true; shift ;;
-        --keep-old)   KEEP_OLD=true; shift ;;
+        -o|--output)    OUTPUT="$2"; shift 2 ;;
+        -v|--version)   SKILL_VERSION="$2"; shift 2 ;;
+        --bump-type)    BUMP_TYPE="$2"; shift 2 ;;
+        --no-bump)      NO_BUMP=true; shift ;;
+        --install)      INSTALL=true; shift ;;
+        --keep-old)     KEEP_OLD=true; shift ;;
         -h|--help)    usage ;;
         *) err "未知参数: $1"; exit 1 ;;
     esac
@@ -75,6 +76,41 @@ done
 
 # ---------- 进入 skill 根目录 ----------
 cd "${SCRIPT_DIR}"
+
+# ---------- 版本号（自动递增 / 显式 / 沿用） ----------
+bump_version() {
+    local ver="$1" type="$2"
+    local major minor patch
+    IFS='.' read -r major minor patch <<< "$ver"
+    major="${major:-0}"; minor="${minor:-0}"; patch="${patch:-0}"
+    case "$type" in
+        major)   major=$((major+1)); minor=0; patch=0 ;;
+        minor)   minor=$((minor+1)); patch=0 ;;
+        patch|*) patch=$((patch+1)) ;;
+    esac
+    echo "${major}.${minor}.${patch}"
+}
+
+if [[ "$BUMP_TYPE" != "patch" && "$BUMP_TYPE" != "minor" && "$BUMP_TYPE" != "major" ]]; then
+    err "无效的 --bump-type: $BUMP_TYPE（应为 patch / minor / major）"
+    exit 1
+fi
+
+CURRENT_VERSION="$(sed -n '/^version:[[:space:]]*/{s/^version:[[:space:]]*//;p;q}' SKILL.md 2>/dev/null || true)"
+
+if [[ -n "$SKILL_VERSION" ]]; then
+    :   # -v 显式指定，直接使用（下方写回 SKILL.md）
+elif [[ "$NO_BUMP" == true ]]; then
+    SKILL_VERSION="$CURRENT_VERSION"
+else
+    SKILL_VERSION="$(bump_version "$CURRENT_VERSION" "$BUMP_TYPE")"
+fi
+
+if [[ -n "$SKILL_VERSION" && "$SKILL_VERSION" != "$CURRENT_VERSION" ]]; then
+    sed -i.bak -E "s/^version:[[:space:]]*[0-9]+\.[0-9]+\.[0-9]+/version: ${SKILL_VERSION}/" SKILL.md
+    rm -f SKILL.md.bak
+    log "版本号: ${CURRENT_VERSION} -> ${SKILL_VERSION}（已写回 SKILL.md）"
+fi
 
 # ---------- 校验必需文件 ----------
 log "校验必需文件..."
