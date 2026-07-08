@@ -1,6 +1,6 @@
 # 简要方案候选评审记录模板
 
-> 本模板填写结果保存到方案工作目录 `.qiqskills/<方案名>/brief-review.md`，**不**进入 `<BRIEF_DOC_PATH>` 或 `<TECH_DOC_PATH>`。用于承载 [SKILL.md](../SKILL.md) Step 1.6 第 7 点要求的候选清单、对比矩阵摘要与人工反馈占位，是阶段 A 到阶段 B 的唯一"人工确认"事实记录。
+> 本模板填写结果保存到方案工作目录 `.qiqskills/<方案名>/brief-review.md`，**不**进入 `<BRIEF_DOC_PATH>` 或 `<TECH_DOC_PATH>`。用于承载 [SKILL.md](../SKILL.md) Step 1.6 第 4 点要求的候选清单、对比矩阵摘要与人工反馈占位，是阶段 A 到阶段 B 的唯一"人工确认"事实记录。
 
 ## 候选清单
 
