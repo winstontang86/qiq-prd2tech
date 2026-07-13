@@ -2,11 +2,11 @@
 # build.sh — 将 qiq-prd2tech skill 打包为 zip。
 #
 # 用法：
-#   ./build.sh                      # 自动递增 patch 版本并打包（写回 SKILL.md）
-#   ./build.sh --bump-type minor     # 递增 minor 版本（也可为 major）
+#   ./build.sh                      # 沿用 SKILL.md 当前版本打包，不改动版本号
+#   ./build.sh --bump-type patch     # 显式递增 patch 版本并写回 SKILL.md（也可为 minor / major）
 #   ./build.sh -o out.zip            # 指定输出文件
 #   ./build.sh -v 1.2.0              # 显式指定版本（写回 SKILL.md，不递增）
-#   ./build.sh --no-bump             # 沿用当前版本，不递增也不写回
+#   ./build.sh --no-bump             # 兼容保留：显式声明不递增（当前默认行为，等价于不带该参数）
 #   ./build.sh --install             # 打包后安装到 ~/.codebuddy/skills/qiq-prd2tech
 #   ./build.sh --keep-old            # 保留 dist 目录下的历史 zip（默认会清理，仅保留最新）
 #
@@ -31,8 +31,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_NAME="qiq-prd2tech"
 SKILL_VERSION=""
-BUMP_TYPE="patch"   # 自动递增时使用：patch | minor | major
-NO_BUMP=false        # true 时沿用当前版本，不递增也不写回 SKILL.md
+BUMP_TYPE=""        # 仅当用户显式传入 --bump-type 时才递增；留空表示不递增
+NO_BUMP=true         # 默认沿用当前版本，不递增也不写回 SKILL.md；保留 --no-bump 仅为兼容旧调用
 
 OUTPUT=""
 INSTALL=false
@@ -65,7 +65,7 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         -o|--output)    OUTPUT="$2"; shift 2 ;;
         -v|--version)   SKILL_VERSION="$2"; shift 2 ;;
-        --bump-type)    BUMP_TYPE="$2"; shift 2 ;;
+        --bump-type)    BUMP_TYPE="$2"; NO_BUMP=false; shift 2 ;;
         --no-bump)      NO_BUMP=true; shift ;;
         --install)      INSTALL=true; shift ;;
         --keep-old)     KEEP_OLD=true; shift ;;
@@ -91,7 +91,7 @@ bump_version() {
     echo "${major}.${minor}.${patch}"
 }
 
-if [[ "$BUMP_TYPE" != "patch" && "$BUMP_TYPE" != "minor" && "$BUMP_TYPE" != "major" ]]; then
+if [[ -n "$BUMP_TYPE" && "$BUMP_TYPE" != "patch" && "$BUMP_TYPE" != "minor" && "$BUMP_TYPE" != "major" ]]; then
     err "无效的 --bump-type: $BUMP_TYPE（应为 patch / minor / major）"
     exit 1
 fi
@@ -100,10 +100,12 @@ CURRENT_VERSION="$(sed -n '/^version:[[:space:]]*/{s/^version:[[:space:]]*//;p;q
 
 if [[ -n "$SKILL_VERSION" ]]; then
     :   # -v 显式指定，直接使用（下方写回 SKILL.md）
-elif [[ "$NO_BUMP" == true ]]; then
-    SKILL_VERSION="$CURRENT_VERSION"
-else
+elif [[ -n "$BUMP_TYPE" ]]; then
+    # 仅当用户显式 --bump-type 时才递增并写回
     SKILL_VERSION="$(bump_version "$CURRENT_VERSION" "$BUMP_TYPE")"
+else
+    # 默认：沿用当前版本，不递增也不写回 SKILL.md
+    SKILL_VERSION="$CURRENT_VERSION"
 fi
 
 if [[ -n "$SKILL_VERSION" && "$SKILL_VERSION" != "$CURRENT_VERSION" ]]; then
